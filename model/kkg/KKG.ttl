@@ -31,12 +31,13 @@ kkgshape:NodeShapeShape a sh:NodeShape;
 	];
 	sh:property [
 		sh:path uml:stereotype; #Het stereotype van de UML Klasse
-		sh:minCount 1;
+		# sh:minCount 1; # Pano: ff niet verplicht gemaakt voor tests
 		sh:maxCount 1;
 		sh:in (
-			kkgbegrip:ObjectType
+			kkgbegrip:Objecttype
 			kkgbegrip:Gegevensgroeptype
 			kkgbegrip:Relatieklasse
+			kkgbegrip:Enumeratie
 		);
 	];
 	sh:property [
@@ -88,7 +89,7 @@ kkgshape:Literal_NodeKind_Node a sh:NodeShape;
   sh:name "Literal_NodeKind_Node";
   sh:property [
     sh:name "Literal_NodeKind_Node_path";
-    sh:path sh:path; #path should be the corresponding property for this UML Attribute		
+    sh:path sh:path; #path should be the corresponding property for this UML Attribute
   ];
   sh:property [
       sh:name "NodeKind_Node_stereotype";
@@ -98,7 +99,7 @@ kkgshape:Literal_NodeKind_Node a sh:NodeShape;
         kkgbegrip:DataElement
         kkgbegrip:Union
         kkgbegrip:UnionElement
-        kkgbegrip:ReferentieElement		
+        kkgbegrip:ReferentieElement
       )
   ]
 .
@@ -126,7 +127,7 @@ kkgshape:IRI_NodeKind_Node a sh:NodeShape;
 	sh:name "IRI_NodeKind_Node";
   sh:property [
     sh:name "IRI_NodeKind_Node_path";
-    sh:path sh:path; #path should be the corresponding property for this UML Attribute		
+    sh:path sh:path; #path should be the corresponding property for this UML Attribute
   ];
   sh:property [
     sh:name "IRI_NodeKind_Node_stereotype";
@@ -295,7 +296,7 @@ kkgshape:GestructureerdDatatypeStereotype rdf:type sh:NodeShape;
 		sh:node kkgshape:GestructureerdDatatype;
 	]
 .
-	
+
 kkgshape:Constraint rdf:type sh:NodeShape;
 	rdfs:label "Constraint";
 	sh:name "«Constraint»";
@@ -446,12 +447,12 @@ kkgshape:Generalisatie rdf:type sh:NodeShape;
 			sh:property kkgshape:gerelateerdObjecttype;
 			sh:property kkgshape:naam;
 		]
-	]	
+	]
 .
 
-kkgshape:ObjectType rdf:type sh:NodeShape;
-	rdfs:label "ObjectType";
-	sh:name "«ObjectType»";
+kkgshape:Objecttype rdf:type sh:NodeShape;
+	rdfs:label "Objecttype";
+	sh:name "«Objecttype»";
 	sh:property [
 		sh:path rdf:type;
 		sh:hasValue owl:Class;
@@ -470,15 +471,15 @@ kkgshape:ObjectType rdf:type sh:NodeShape;
 	sh:property kkgshape:code;
 	sh:property kkgshape:constraint;
 .
-kkgshape:ObjectTypeStereotype rdf:type sh:NodeShape;
-	rdfs:label "ObjectType";
-	sh:name "«ObjectType»";
-	sh:targetNode kkgbegrip:ObjectType;
+kkgshape:ObjecttypeStereotype rdf:type sh:NodeShape;
+	rdfs:label "Objecttype";
+	sh:name "«Objecttype»";
+	sh:targetNode kkgbegrip:Objecttype;
 	sh:property [
 		sh:path [
 			sh:inversePath uml:stereotype
 		];
-		sh:node kkgshape:ObjectType;
+		sh:node kkgshape:Objecttype;
 	]
 .
 
@@ -490,7 +491,7 @@ kkgshape:PrimitiefDatatype rdf:type sh:NodeShape;
 		sh:path [
 			sh:inversePath uml:stereotype;
 		];
-		sh:or ( 
+		sh:or (
 			[sh:datatype xsd:CharacterString;]
 			[sh:datatype xsd:Real;]
 			[sh:datatype xsd:Date;]
@@ -520,7 +521,7 @@ kkgshape:ReferentieElement rdf:type sh:NodeShape;
 			sh:property kkgshape:domeinPatroon;
 			sh:property kkgshape:domeinFormeelPatroon;
 			sh:property kkgshape:kardinaliteit;
-			sh:property kkgshape:identificatie;
+			sh:property kkgshape:identificatie; # Pano: Wat is de bedoeling van identificatie?
 			sh:property kkgshape:toelichting;
 		]
 	]
@@ -714,13 +715,44 @@ kkgshape:datumOpname rdf:type sh:PropertyShape;
 	sh:maxCount 1;
 .
 
+# Pano: Uitgebreid met support voor definities in skos:Concept
 kkgshape:definitie rdf:type sh:PropertyShape;
-	rdfs:label "definitie";
-	sh:name "skos:definition";
-	sh:path skos:definition;
-	sh:datatype xsd:string;
-	sh:minCount 1;
-	sh:maxCount 1;
+	# rdfs:label "definitie";
+	# sh:name "skos:definition";
+	# sh:path skos:definition;
+	# sh:datatype xsd:string;
+	# sh:minCount 1;
+	# sh:maxCount 1;
+	sh:node [
+		sh:or (
+			[
+				rdfs:label "definitie";
+				sh:name "skos:definition";
+				sh:path skos:definition;
+				sh:datatype xsd:string;
+				sh:minCount 1;
+				sh:maxCount 1;
+			]
+			[
+				rdfs:label "definitie";
+				sh:name "skos:definition";
+				sh:path ( sh:path dct:subject skos:definition ) ;
+				sh:nodeKind sh:Literal ;
+				# sh:datatype xsd:string ;
+				sh:minCount 1;
+				sh:maxCount 1;
+			]
+			[
+				rdfs:label "definitie";
+				sh:name "skos:definition";
+				sh:path ( sh:targetClass dct:subject skos:definition ) ;
+				sh:nodeKind sh:Literal ;
+				# sh:datatype xsd:string ;
+				sh:minCount 1;
+				sh:maxCount 1;
+			]
+		)
+	]
 .
 
 kkgshape:domeinFormeelPatroon rdf:type sh:PropertyShape;
@@ -734,7 +766,7 @@ kkgshape:domeinFormeelPatroon rdf:type sh:PropertyShape;
 
 kkgshape:domeinLengte rdf:type sh:PropertyShape;
 	rdfs:label "domein lengte";
-	sh:name "kkg:domeinLengte"; 
+	sh:name "kkg:domeinLengte";
 	sh:path kkg:domeinLengte;
 	sh:datatype xsd:decimal; #Klopt dit?
 	sh:maxCount 1;
@@ -751,7 +783,7 @@ kkgshape:domeinPatroon rdf:type sh:PropertyShape;
 
 kkgshape:domeinType rdf:type sh:PropertyShape;
 	rdfs:label "domein type";
-	sh:name "kkg:domeinType"; 
+	sh:name "kkg:domeinType";
 	sh:path kkg:domeinType;
 	sh:datatype xsd:string;
 	sh:minCount 1;
@@ -776,37 +808,67 @@ kkgshape:gerelateerdObjecttype rdf:type sh:PropertyShape;
 	sh:maxCount 1;
 .
 
+# Pano: uitgebreid met support voor skos:Concept
 kkgshape:herkomst rdf:type sh:PropertyShape;
 	rdfs:label "herkomst";
 	sh:name "dcterms:source";
-	sh:path dct:source;
-	sh:datatype xsd:string;
-	sh:minCount 1;
-	sh:maxCount 1;
+	# sh:path dct:source;
+	# sh:datatype xsd:string;
+	# sh:minCount 1;
+	# sh:maxCount 1;
+	sh:node [
+		sh:or (
+			[ # Pano: is het niet raar om herkomst informatie op een sh:NodeShape te zetten?
+				rdfs:label "herkomst";
+				sh:name "dcterms:source";
+				sh:path dct:source;
+				sh:datatype xsd:string;
+				sh:minCount 1;
+				sh:maxCount 1;
+			]
+			[ # Pano: wij zetten de herkomst van een begrip altijd op de skos:Concept.
+				rdfs:label "herkomst";
+				sh:name "dcterms:source";
+				sh:path ( sh:path dct:subject dct:source ); # Pano: NOTE: Dit kan lastig worden als de waarde van sh:path complex is
+				sh:nodeKind sh:IRI ;
+				sh:minCount 1;
+				sh:maxCount 1;
+			]
+			[ # Pano: wij zetten de herkomst van een begrip altijd op de skos:Concept.
+				rdfs:label "herkomst";
+				sh:name "dcterms:source";
+				sh:path ( sh:targetClass dct:subject dct:source ); # Pano: NOTE: Dit kan lastig worden als de target complex is
+				sh:nodeKind sh:IRI ;
+				sh:minCount 1;
+				sh:maxCount 1;
+			]
+		) ;
+	] ;
 .
 
+# Pano: ik snap het verschil niet tussen deze en die hierboven.
 kkgshape:herkomstDefinitie rdf:type sh:PropertyShape;
 	rdfs:label "herkomst definitie";
 	sh:name "dcat:Dataset";
-	sh:path dcat:Dataset;
+	sh:path dcat:Dataset; # Pano: Dit wijkt af van wat er in het stereotypes md bestand staat. Overigens is de domain van dcat:dataset dcat:Catalog.
 	sh:datatype xsd:string;
-	sh:minCount 1;
+	# sh:minCount 1; # Pano: Tijdelijk niet verplicht gemaakt
 	sh:maxCount 1;
 .
 
 kkgshape:identificerend rdf:type sh:PropertyShape;
 	rdfs:label "identificerend";
-	sh:name "kkg:identificerend"; 
+	sh:name "kkg:identificerend";
 	sh:path kkg:identificerend;
 	sh:datatype xsd:string;
-	sh:maxCount 1;		
+	sh:maxCount 1;
 .
 
 kkgshape:indicatieAbstractObject rdf:type sh:PropertyShape;
 	rdfs:label "indicatie abstract object";
-	sh:name "kkg:indicatieAbstractObject"; 
+	sh:name "kkg:indicatieAbstractObject";
 	sh:path kkg:indicatieAbstractObject;
-	sh:datatype xsd:string; 
+	sh:datatype xsd:string; # Pano: waarom geen xsd:boolean?
 	sh:minCount 1;
 	sh:maxCount 1;
 .
@@ -815,17 +877,20 @@ kkgshape:indicatieAfleidbaar rdf:type sh:PropertyShape;
 	rdfs:label "indicatie afleidbaar";
 	sh:name "prov:wasDerivedFrom";
 	sh:path prov:wasDerivedFrom;
-	sh:datatype xsd:string;
-	sh:minCount 1;
+	sh:datatype xsd:string; # Pano: waarom geen xsd:boolean?
+	# Pano: Waarom is dit verplicht?
+	# sh:minCount 1;
 	sh:maxCount 1;
 .
 
 kkgshape:indicatieFormeleHistorie rdf:type sh:PropertyShape;
 	rdfs:label "indicatie formele historie";
-	sh:name "kkg:indicatieFormeleHistorie";		
+	sh:name "kkg:indicatieFormeleHistorie";
 	sh:path kkg:indicatieFormeleHistorie;
-	sh:datatype xsd:datetime;
-	sh:minCount 1;
+	sh:datatype xsd:datetime; # Pano: boolean?
+	# Pano: Waarom is dit verplicht?
+	# Wat betekent deze indicatie eigenlijk?
+	# sh:minCount 1;
 	sh:maxCount 1;
 .
 
@@ -833,18 +898,21 @@ kkgshape:indicatieMaterieleHistorie rdf:type sh:PropertyShape;
 	rdfs:label "indicatie materiele historie";
 	sh:name "kkg:indicatieMaterieleHistorie";
 	sh:path kkg:indicatieMaterieleHistorie;
-	sh:datatype xsd:string;
-	sh:minCount 1;
+	sh:datatype xsd:string; # Pano: boolean? Wijkt af van formele historie?
+	# Pano: Waarom is dit verplicht?
+	# Wat betekent deze indicatie eigenlijk?
+	# sh:minCount 1;
 	sh:maxCount 1;
 .
 
+# Pano: We gaan geen owl:cardinality op een sh:NodeShape toepassen.
 kkgshape:kardinaliteit rdf:type sh:PropertyShape;
 	rdfs:label "kardinaliteit";
 	sh:name "owl:cardinality";
 	sh:path owl:cardinality;
 	sh:datatype xsd:string;
-	sh:minCount 1;
-	sh:maxCount 1;
+	# sh:minCount 1;
+	# sh:maxCount 1;
 .
 
 kkgshape:kwaliteit rdf:type sh:PropertyShape;
@@ -875,7 +943,9 @@ kkgshape:locatie rdf:type sh:PropertyShape;
 kkgshape:naam rdf:type sh:PropertyShape;
 	rdfs:label "naam";
 	sh:name "skos:prefLabel";
-	sh:path skos:prefLabel;
+	# Pano: Waarom skos:prefLabel en niet rdfs:label?
+	# sh:path skos:prefLabel;
+	sh:path [ sh:alternativePath (skos:prefLabel rdfs:label) ]; # Pano: Alternatief?
 	sh:datatype xsd:string;
 	sh:minCount 1;
 	sh:maxCount 1;
@@ -929,12 +999,14 @@ kkgshape:uniekeAanduiding rdf:type sh:PropertyShape;
 	sh:name "skos:notation";
 	sh:path skos:notation;
 	sh:datatype xsd:string;
-	sh:minCount 1;
+	# sh:minCount 1;
+	# Pano: Waarom zou elk object een unieke aanduiding moeten hebben?
+	# skos:notation is meer iets voor identifiers of waardes uit een enumeratie oid IMO.
 	sh:maxCount 1;
 .
 
 ### PROPERTY SHAPES - tussen shapes
-	
+
 kkgshape:attribuut rdf:type sh:PropertyShape;
 	rdfs:label "attribuut";
 	sh:node kkgshape:Attribuutsoort;
